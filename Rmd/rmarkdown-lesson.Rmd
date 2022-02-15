@@ -1,0 +1,87 @@
+---
+title: "workshop_Rmarkdown"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Header 1
+
+## Header 2
+
+### Header 3
+
+Write some sample text here. **Bold text**
+
+Use the Knit button to show what the rendered version looks like
+
+Create lists using the single \* or a - and get bullets, need to include a blank line after this line
+
+-   apple
+-   banana
+
+# First Challenge
+
+Write some *italic* text
+
+#### **Second Challenge**
+
+Numbered list
+
+1.  apple
+2.  banana
+3.  kiwi
+
+This will order it for you (as 1, 2, 3)
+
+1.  apple
+2.  banana
+3.  kiwi
+
+Can use "markdown quick reference" from the Help menu to get some quick tips or cheat sheet
+
+Can use the compass symbol on the top right to have it format as you go (visual markdown editor). Good for adding citations.
+
+To insert code chunk
+cmd + option + i (on mac)
+
+cntrl + alt + i (on pc)
+
+```{r}
+
+x = 3+2
+
+(y = sum(4, 5, 6, 7))
+
+```
+
+## Read in data
+
+../ goes up a folder, hit "tab" and will show you the options from which to select
+
+```{r}
+
+bg_chem = read.csv("../data/BGchem2008data.csv")
+
+```
+
+
+## Analysis
+
+## Plots
+
+echo = TRUE means that the R code will show up in the rendered document. The default from the beginning is TRUE
+
+Help -> cheat sheets -> R markdown reference guide or cheat sheet
+
+```{r , echo=TRUE}
+
+plot(bg_chem$CTD_Depth , bg_chem$CTD_Temperature)
+
+```
+
+
