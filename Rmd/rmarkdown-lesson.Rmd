@@ -83,5 +83,6 @@ Help -> cheat sheets -> R markdown reference guide or cheat sheet
 plot(bg_chem$CTD_Depth , bg_chem$CTD_Temperature)
 
 ```
-
+# Discussion
+This is my first introduction to Git and I think it would be a great tool to use with my new grad student. We'll be working on plant phys models in OpenBUGS, so I will have to sort out how to use Git with this program (.odc files). This tutorial today has really demystified Git for me but I can see that I'll have to refer back to the instructions a few times to catch on.
 
