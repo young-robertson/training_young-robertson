@@ -80,7 +80,7 @@ Help -> cheat sheets -> R markdown reference guide or cheat sheet
 
 ```{r , echo=TRUE}
 
-plot(bg_chem$CTD_Depth , bg_chem$CTD_Temperature)
+plot(bg_chem$CTD_Depth , bg_chem$CTD_Temperature, type = "p")
 
 ```
 # Discussion
