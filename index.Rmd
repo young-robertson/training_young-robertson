@@ -17,3 +17,12 @@ knitr::opts_chunk$set(echo = TRUE)
 #[]name of the link, () is the url 
 
 #This creates links on the primary webpage to different research projects
+
+```{r}
+
+```
+
+#to include images in Rmarkdown
+#upload an image to the server, save to directory in Rstudio, then can do the following-- use a ! infront of the stuff used in the last section #image name in the [], image path info is in ()
+
+#set echo = FALSE if don't want R code to show up in the rendered text, so only the figure shows up without the R code
