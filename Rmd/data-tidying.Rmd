@@ -1,0 +1,141 @@
+---
+title: "Data Tidying"
+author: "young-robertson"
+date: "2/16/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load in library packages at the beginning
+Message, warning = FALSE suppresses warnings in rendered document
+
+to install packages, do this:
+install.packages("dplyr")
+But it's already been done on this server
+
+```{r, message = FALSE, warning = FALSE}
+
+library(dplyr)
+library(tidyr)
+library(readr)
+
+```
+
+Sometimes have to identify which function you're using from which package -- 
+package_name::function_name
+
+like this:
+stats::filter()
+
+https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1
+
+## Clean Data
+
+Piping to string together functions to apply to the data
+ %>% : Ctrl + Shift + M (Windows)
+
+```{r}
+
+catch_original <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+
+#or can do this:
+
+catch_original <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"))
+
+head(catch_original)
+str(catch_original)
+
+```
+
+```{r}
+catch_data <- catch_original %>% 
+  #select(Region , Year, Chinook, Sockeye, Coho, Pink, Chum)  #selects the columns we want to keep
+  select(-All, -notesRegCode)  #also selects the columns we want to keep, so we're not keeping All and notesRegCode
+
+head(catch_data)
+glimpse(catch_data)
+summary(catch_data)
+#summary is showing us Chinook is a Chr data types
+
+```
+
+-change chinook from chr to num
+
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = if_else(Chinook == "I", "1" , Chinook)) %>%  #changes chr I to chr 1 -- did this after running line 81 and 83
+  mutate(Chinook = as.numeric(Chinook))  #changes Chinook from chr to num
+  
+head(catch_clean)
+str(catch_clean)
+```
+
+### finding spurious characters in Chinook column
+```{r}
+#which returns row numbers or indices for which a statement is true
+(i = which(is.na(catch_clean$Chinook)))  #only row 401 is the problem , is.na identifies where there are NA's with TRUE or FALSE
+
+catch_original[i,] #shows us the offending row, shows an "I" instead of a 1
+
+```
+
+### reshaping data
+-move from wide to long format
+
+```{r}
+catch_long = catch_clean %>% 
+  pivot_longer(cols = -c(Region, Year) , names_to = "Species" , values_to = "Catch") %>% 
+  rename(catch_thousands = Catch) %>%  #renames Catch to catch_thousands
+  mutate(catch = catch_thousands *1000) %>% 
+  select(-catch_thousands)
+  
+#not going to pivot over region and year (see the "-" before "c"), column we're going to create (takes the name of the columns and puts them in Species column, takes the values and puts them in the catch column)
+#put quotes around the new variable or name, don't need to use quotes if we're calling a variable that already exists
+
+head(catch_long)
+```
+
+
+```{r}
+catch_wide = catch_long %>% 
+  pivot_wider(names_from = Region, values_from = catch)  #create columns from region and populate it with catch data
+
+head(catch_wide)
+```
+
+
+## Split, combine, apply
+
+- calculate mean salmon catch by region
+
+```{r}
+mean_region = catch_long %>% 
+  filter(Species == "Sockeye") %>% #just shows us sockeye catch mean data
+  group_by(Region, Species) %>% 
+  summarise(catch_mean = mean(catch) , n = n() , .groups = "drop")  #n function counts number of rows in each observations
+
+head(mean_region)
+
+```
+
+### Joining
+
+```{r}
+region_defs <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1") %>% 
+    select(code, mgmtArea)
+
+head(region_defs)
+```
+
+
+```{r}
+catch_joined <- left_join(catch_long, region_defs, by = c("Region" = "code"))  #use "by" argument because there isn't a common column between the two datasets
+
+head(catch_joined)
+nrow(catch_joined) == nrow(catch_long)  #True
+```
