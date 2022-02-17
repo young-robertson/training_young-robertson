@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - [Data Tidying](Rmd/data-tidying.html)
 - [Markdown Lesson](Rmd/rmarkdown-lesson.html)
+- [Catch Data](CatchData-Separate.html)
 
 #[]name of the link, () is the url 
 
