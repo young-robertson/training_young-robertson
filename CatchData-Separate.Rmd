@@ -94,4 +94,5 @@ leaflet(locations) %>%
   addTiles() %>% 
   addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~Location)
 ```
-
+Might need to generate figures as html to have figures pop up for each site
+might be addPopups , put html in the addPopups() , can create a column in data with html link, but could make website loading slow, so could just put links to graphs in the popup rather than the graphs themselves
