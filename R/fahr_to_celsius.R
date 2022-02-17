@@ -49,3 +49,14 @@ celsius_to_fahr = function(celsius){
 
 (airtemps_f = celsius_to_fahr(celsius=airtemps_c))
 airtemps_f == airtemps  #are these equal? yes, trues across the board
+
+
+##
+convert_temps = function(fahr){
+  celsius = (fahr - 32)*5/9
+  kelvin = (celsius +273.15)
+  return(data.frame(fahrenheit = fahr , celsius = celsius, kelvin = kelvin))
+}
+
+convert_temps(airtemps)
+convert_temps
