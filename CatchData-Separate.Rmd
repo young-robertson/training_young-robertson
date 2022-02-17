@@ -47,3 +47,51 @@ annual_esc <- esc %>%
 head(annual_esc)
 ```
 
+## ggplot
+
+```{r}
+ggplot(annual_esc, mapping = aes(x = Species, y = escapement, fill = SASAP.Region)) +
+  geom_col(position = "dodge")
+
+#dodge breaks up the single columns/fill values into bars that are next to each other
+#stack stacks them on top of each other (default is stacking)
+
+```
+
+
+```{r}
+kodiak_esc <- annual_esc %>% 
+  filter(SASAP.Region == "Kodiak")
+```
+
+```{r}
+#can create your own theme for the plot aesthetics
+my_theme = theme_bw() +
+  theme(legend.position = "bottom")
+
+ggplot(kodiak_esc, aes(x=Year, y=escapement, color = Species)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous(labels = comma) +  #ylabel is no longer in sci notation
+  scale_x_continuous(n.breaks = 10) +  #adds extra major ticks to x axis
+  scale_color_brewer(palette="Dark2") +
+  ylab("Escapement (num fish)") +
+  ggtitle("Kodiak Escapement") +
+  my_theme
+  
+  #theme(legend.position = "bottom")   #can change every part of the plot
+
+```
+
+```{r}
+locations <- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()  #drop any row with an NA
+```
+
+```{r}
+leaflet(locations) %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~Location)
+```
+
