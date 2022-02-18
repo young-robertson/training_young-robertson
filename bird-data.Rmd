@@ -1,0 +1,100 @@
+---
+title: "OnOurOwn-DataMgt"
+author: "young-robertson"
+date: "2/17/2022"
+output: html_document
+
+#this is the assigment from chapter 12 in the book
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rvest)
+library(readr)
+library(dplyr)
+library(janitor)
+```
+
+
+```{r}
+webpage <- read_html("https://www.pwrc.usgs.gov/bbl/manual/speclist.cfm")
+#the table is in a weird format
+
+tbls <- html_nodes(webpage, "table") %>% 
+    html_table(fill = TRUE)
+
+species <- tbls[[1]] %>% #grab the first elemnt
+    clean_names() %>% #cleans up column names
+    select(alpha_code, common_name) %>% #selects 2 columns
+    mutate(alpha_code = tolower(alpha_code))  #lower case the species code
+
+head(species)
+```
+
+```{r}
+predators = read.csv("https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A9ffec04c-7e2d-41dd-9e88-b6c2e8c4375e")
+
+nests = read.csv("https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A982bd2fc-4edf-4da7-96ef-0d11b853102d")
+
+head(predators)
+str(predators)
+
+head(nests)
+str(nests)
+
+
+```
+
+```{r}
+
+predators_commonname = left_join(predators , species , by = c("species" = "alpha_code"))
+head(predators_commonname)
+
+code_to_commonname <- function(x , y) {
+  predators_commonname <- left_join(predators , species , by = c("species" = "alpha_code"))
+  return(predators_commonname)
+}
+
+nest_commonnames_ = code_to_commonname(nests , species)
+head(nest_commonnames_)
+
+predators_commonnames_ = code_to_commonname(predators , species)
+head(predators_commonnames_)
+
+```
+
+```{r}
+total_predators = predators_commonnames_ %>% 
+  select(year, common_name, count) %>% 
+  na.omit() %>% 
+  group_by(year , common_name) %>% 
+  summarise(predator_count = sum(count))
+
+head(total_predators)
+
+Total_predated_eggs = nest_commonnames_ %>% 
+  select(year, common_name , number_eggs_predated) %>% 
+  na.omit() %>% 
+  group_by(year , common_name) %>% 
+  summarise(predated_eggs = sum(number_eggs_predated))
+
+```
+
+
+```{r}
+library(tidyr)
+library(ggplot2)
+
+(total_predators_figure = ggplot(aes(x = year, y = predator_count , color = common_name) , data = total_predators) +
+    geom_line() +
+  geom_point())
+
+(total_predatedeggs_figure = ggplot(aes(x = year, y = predated_eggs , color = common_name) , data = Total_predated_eggs) +
+    geom_line() +
+  geom_point())
+
+```
+
